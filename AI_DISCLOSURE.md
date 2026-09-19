@@ -1,7 +1,7 @@
 # AI Use Disclosure
 
 Raghava · DA24B021 · AIOps Module 3
-
+The AI assistant I used for this assignment is Claude-Opus
 I used an AI assistant for:
 
 - **Template code.** Starting points for the Dockerfiles, the Compose file, the

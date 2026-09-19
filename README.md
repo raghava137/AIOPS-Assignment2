@@ -2,6 +2,7 @@
 
 Raghava · DA24B021
 
+link for video recording:https://drive.google.com/file/d/1ndvMXfRVBExD6d2QnXg2j1T9F0YJv5U-/view?usp=sharing
 Docker and Kubernetes coursework, built around a spam-detection API.
 Write-up for all four questions is `report.pdf`.
 

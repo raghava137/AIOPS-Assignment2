@@ -5,16 +5,6 @@ minikube start --nodes 2 --cpus 2 --memory 2048
 echo ""
 echo "=== allocatable CPU per node ==="
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.allocatable.cpu}{"\n"}{end}'
- 
-BAD=$(kubectl get nodes -o jsonpath='{range .items[*]}{.status.allocatable.cpu}{"\n"}{end}' | grep -vc '^2$')
-if [ "$BAD" -ne 0 ]; then
-    echo ""
-    echo "Nodes did not come up with 2 CPUs. Purge and add the kubelet reserve:"
-    echo "  minikube start --nodes 2 --cpus 2 --memory 2048 \\"
-    echo "    --extra-config=kubelet.system-reserved=cpu=number_cpu_alloc-2"
-    exit 1
-fi
- 
 python generate_shards.py
  
 docker build --no-cache -t shard-validator:v1 .

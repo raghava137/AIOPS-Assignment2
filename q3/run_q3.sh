@@ -3,8 +3,7 @@
 
 # --cpus is only read at creation and an old profile overrides it, so purge first.
 minikube delete --all --purge
-minikube start --nodes 2 --cpus 2 --memory 2048 \
-  --extra-config=kubelet.system-reserved=cpu=4
+minikube start --nodes 2 --cpus 2 --memory 2048 
 
 echo ""
 echo "=== allocatable CPU per node ==="

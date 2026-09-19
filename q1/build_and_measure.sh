@@ -2,8 +2,6 @@ docker build -t spam-api:naive -f Dockerfile.naive .
 docker build -t spam-api:multistage -f Dockerfile .
 
 check () {   
-    echo ""
-    echo "=== $1 ==="
     docker rm -f q1check > /dev/null 2>&1
     docker run -d --name q1check -p "$2:8080" "$1" > /dev/null
     sleep 5
@@ -20,8 +18,6 @@ check () {
 check spam-api:naive      8081
 check spam-api:multistage 8082
 
-echo ""
-echo "=== sizes ==="
 docker images spam-api --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
 
 N=$(docker image inspect spam-api:naive      --format '{{.Size}}')

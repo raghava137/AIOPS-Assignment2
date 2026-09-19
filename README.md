@@ -15,6 +15,7 @@ q3/           Kubernetes Indexed Job over 8 CSV shards
 q4/           Kubernetes Deployment, self-healing, rolling update
 ```
 
+In each of the question folder there is a folder with name (#nameproof) folder containing screenshot proofs
 ## q1
 
 The API itself: `app.py` serves `/predict` and `/healthz`,

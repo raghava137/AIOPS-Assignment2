@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: shard-validation
+spec:
+  # 8 shards, one pod each. Indexed mode gives every pod a distinct
+  # JOB_COMPLETION_INDEX in 0..7, which the container uses to pick its shard.
+  completions: 8
+  completionMode: Indexed
+
+  # Parallelism 4. See README for the arithmetic: the cluster has 4 allocatable
+  # CPUs and each pod requests 900m, so 4 x 900m = 3600m fits inside 4000m
+  # while 5 pods (4500m) would not. The 8 shards therefore run as two waves
+  # of 4.
+  parallelism: 4
+
+  backoffLimit: 2
+
+  template:
+    spec:
+      # Batch work: a failed pod should be replaced by the Job controller
+      # rather than restarted in place, so the failure is visible as a pod.
+      restartPolicy: Never
+
+      containers:
+      - name: validator
+        image: shard-validator:v1
+        imagePullPolicy: IfNotPresent
+
+        # requests == limits puts the pod in the Guaranteed QoS class, so the
+        # scheduler's arithmetic and the runtime's ceiling agree. Without
+        # that, 4 pods could be admitted and then contend for the same CPUs.
+        resources:
+          requests:
+            cpu: "900m"
+            memory: "128Mi"
+          limits:
+            cpu: "900m"
+            memory: "128Mi"
+
+        # Downward API: the pod needs to report which pod it is and which node
+        # it landed on, so the collected results show the spread across nodes.
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName

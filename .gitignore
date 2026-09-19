@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+spam_dataset.csv
+model.joblib
+q3/shards/
+expected_counts.txt
+results.json

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spam-api
+  labels:
+    app: spam-api
+spec:
+  # Two replicas: with one, deleting a pod would mean an outage while the
+  # replacement starts, and a rolling update would have nothing to shift
+  # traffic onto.
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: spam-api
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0    # never drop below 2 ready pods during an update
+      maxSurge: 1          # bring up one extra, then retire an old one
+
+  template:
+    metadata:
+      labels:
+        app: spam-api
+    spec:
+      containers:
+      - name: api
+        image: spam-api:v1
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        # Downward API, so a response can say which pod answered
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+        # /healthz returns 503 until the joblib model is in memory, so this
+        # probe holds a pod out of the Service until it can actually serve.
+        # That is what makes maxUnavailable: 0 meaningful during a rollout.
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          failureThreshold: 3

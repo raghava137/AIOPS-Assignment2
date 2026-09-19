@@ -1,7 +1,4 @@
-#!/usr/bin/env bash
-# Q3: indexed Job over 8 shards, 2 nodes with 2 allocatable CPUs each.
 
-# --cpus is only read at creation and an old profile overrides it, so purge first.
 minikube delete --all --purge
 minikube start --nodes 2 --cpus 2 --memory 2048 
 
@@ -14,14 +11,12 @@ if [ "$BAD" -ne 0 ]; then
     echo ""
     echo "Nodes did not come up with 2 CPUs. Purge and add the kubelet reserve:"
     echo "  minikube start --nodes 2 --cpus 2 --memory 2048 \\"
-    echo "    --extra-config=kubelet.system-reserved=cpu=4"
+    echo "    --extra-config=kubelet.system-reserved=cpu=number_cpu_alloc-2"
     exit 1
 fi
  
 python generate_shards.py
  
-# docker-env does not work on multi-node clusters, so the image is built on the
-# host and then loaded into both nodes.
 docker build --no-cache -t shard-validator:v1 .
 minikube image load shard-validator:v1
  

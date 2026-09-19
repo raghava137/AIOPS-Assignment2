@@ -5,7 +5,7 @@ Raghava · DA24B021 · AIOps Module 3
 I used an AI assistant for:
 
 - **Template code.** Starting points for the Dockerfiles, the Compose file, the
-  Job and Deployment manifests, and the shell scripts.
+  Job and Deployment manifests.
 - **Writing and formatting the markdown and LaTeX files.** The README, this
   file, and the layout of the report.
 - **Debugging.** Working out what was wrong when things failed:
